@@ -1,0 +1,775 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Scenario Data Heist Write-Up:Hackviser</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="34aff1a5-72dd-8054-8f18-c7b6d23b9db2" class="page sans"><header><h1 class="page-title" dir="auto">Scenario Data Heist Write-Up:Hackviser</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80e6-9261-dfcbe3204c81" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-802d-bd30-fd61954158e0" class="bulleted-list"><li style="list-style-type:disc">The scenario is this:</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8026-9298-e3a74bc78597" class="bulleted-list"><li style="list-style-type:disc">We have noticed that there are some employees in our company who are not<br/> sufficiently aware of cybersecurity issues. It has been observed that <br/>these employees have uploaded files containing company data to a website<br/> called &quot;Exif Viewer&quot; in order to view metadata information.</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80ed-b35c-db8f997a4256" class="bulleted-list"><li style="list-style-type:disc">The site claims that it does not store the uploaded files. However, we <br/>have to make sure that this is the case. If any of our company&#x27;s files <br/>have been compromised in this process, we need to determine what <br/>information may be at risk. You are expected to guide us through this <br/>critical process. We rely on your expertise.</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80e2-a89c-f3faa8e3b6fe" class="bulleted-list"><li style="list-style-type:disc">Good luck!</li></ul></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80f5-96dc-c44083757885" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-806c-b48e-e979777fcc44" class="bulleted-list"><li style="list-style-type:disc">Looks interesting </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8017-ad13-ebd28d595b8c" class="bulleted-list"><li style="list-style-type:disc">I just have a website at the moment</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8084-8e8f-d2dd0889875d" class="bulleted-list"><li style="list-style-type:disc">It looks like this</li></ul></div><div style="display:contents" dir="auto"><ul id="34bff1a5-72dd-809c-b9e6-ca2c1fa516e0" class="bulleted-list"><li style="list-style-type:disc">And in real life I saw websites like this website so this ctf looks very relastic.That’s good</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-80b4-a4f4-dd9b0cdcbf7b" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80b8-accd-f64c3b273189" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8094-94a3-f10e752a7369" class="bulleted-list"><li style="list-style-type:disc">I wanna test the website</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8014-af85-db5bc256fb05" class="bulleted-list"><li style="list-style-type:disc">Yeah it is really working</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8049-892d-ec80106f9cf5" class="bulleted-list"><li style="list-style-type:disc">I think I can upload something in the input field to be able to get a shell or to be able to reach the database </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-804c-92ca-fce28cc605e3" class="bulleted-list"><li style="list-style-type:disc">We are gonna see what happens</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-8081-9c21-e8be8abf65fa" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%201.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%201.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80db-87a8-e592ec578b92" class="">
+</p></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-806e-82da-da2790b897bd" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="34aff1a5-72dd-80aa-bf2d-c37629f2898a" class="">1-What is the path where the files are stored on the server?</h1></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-806b-95f8-efbc52b0bc4c" class="bulleted-list"><li style="list-style-type:disc">I wanna start with a nmap scan to understand the structure</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8052-ae2d-f0a003fedfff" class="bulleted-list"><li style="list-style-type:disc">Firstly I wanna find the ip address of the website</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-806d-a17c-c67462bc77b8" class="bulleted-list"><li style="list-style-type:disc">I’ll find it with ping command</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-8093-b143-e98343a88455" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%202.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%202.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80ab-8896-ee42fd07f96b" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8060-8025-fb98477a283a" class="bulleted-list"><li style="list-style-type:disc">I found the ip address of the website</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-801a-a962-c8cd7a49f084" class="bulleted-list"><li style="list-style-type:disc">It is 172.20.25.136</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8044-a56d-ec0edbb6e602" class="bulleted-list"><li style="list-style-type:disc">Let’s run a nmap command</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-8069-89da-e5cfb3571d7b" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%203.png"><img style="width:709.9833374023438px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%203.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80c6-a300-e93cd070b881" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8039-af51-f9cf929e8dab" class="bulleted-list"><li style="list-style-type:disc">22 ssh and 80 http ports are open </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-806e-824b-cf90b4ab6e45" class="bulleted-list"><li style="list-style-type:disc">Right now I’m not able to use 22 ssh port because I don’t have any username and password information</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80f9-94a3-dd70e96bccb4" class="bulleted-list"><li style="list-style-type:disc">Let’s make a gobuster scan to find other directories in the website</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-807b-ad3a-e4a47c1f31d9" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%204.png"><img style="width:709.9833374023438px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%204.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80df-b361-d8bba14a37eb" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80b3-89c6-e7769869e0e0" class="bulleted-list"><li style="list-style-type:disc">I couldn’t find any useful information from this gobuster scan</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80d7-a123-d860a9fa3b2f" class="bulleted-list"><li style="list-style-type:disc">Let’s make another gobuster scan with another wordlist</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8072-aa83-fed33dbd88ea" class="bulleted-list"><li style="list-style-type:disc">Right now I started a comprenshive gobuster scan because the first one was a little bit easy</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8017-a041-ca388b712869" class="bulleted-list"><li style="list-style-type:disc">But from this gobuster scan I couldn’t find anything too</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8013-9f29-d178855a8ee5" class="bulleted-list"><li style="list-style-type:disc">I couldn’t find something useful with this gobuster scans</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-807e-aec1-f72efcc208d2" class="bulleted-list"><li style="list-style-type:disc">Let’s try to find manual </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-800b-92e9-dcce17ee8677" class="bulleted-list"><li style="list-style-type:disc">I tried to find for robots.txt,sitemap.txt,uploads,images,temp,files,static but none of them worked</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80b3-9af6-c9d33becb265" class="bulleted-list"><li style="list-style-type:disc">I tried to upload a .php file to the system </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-804a-9ee1-c8bea01bbd23" class="bulleted-list"><li style="list-style-type:disc">It gives me informatipn but still says unsuported file type</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-80dd-89ad-e5fd73cd6e46" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%205.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%205.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-805f-ab70-fbb58c387b0d" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-800f-8a60-e94c9df5008d" class="bulleted-list"><li style="list-style-type:disc">Hmmmm</li></ul></div><div style="display:contents" dir="auto"><ul id="34bff1a5-72dd-8041-92bf-ccd6bc27baf4" class="bulleted-list"><li style="list-style-type:disc">I tried to bypass the unsupported file type.I used burpsuite and I bypassed it but I still couldn’t get any useful information</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80f5-bc97-eaca95e176e3" class="bulleted-list"><li style="list-style-type:disc">I tried to find the path for 2 or 3 hours but I was not successful</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-808a-a35c-dc3dcc3c01c9" class="bulleted-list"><li style="list-style-type:disc">I always tried to make some local file inclusion and then I thought I can find the path </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80c7-8f40-f6247c57cf38" class="bulleted-list"><li style="list-style-type:disc">But no.I was wrong.</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80e2-b2e3-d4629b26fc6a" class="bulleted-list"><li style="list-style-type:disc">Then I relaized something</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80bf-a08f-c060bdcb2ef7" class="bulleted-list"><li style="list-style-type:disc">I thought</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80cf-86e4-cfbf78ea6354" class="bulleted-list"><li style="list-style-type:disc">This exiftool is running command on the linux so if there is an exploit I can run command on linux so maybe a remote code execution</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8099-8eeb-f4bc0c5e5d70" class="bulleted-list"><li style="list-style-type:disc">Then if you look to the first line you can see the version of the exiftool </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80bd-a592-ca1382c092e4" class="bulleted-list"><li style="list-style-type:disc">So easy </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8062-9f9a-d269c935a189" class="bulleted-list"><li style="list-style-type:disc">Let’s look to the exploit db </li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-803a-8f24-ddebeb4d08cf" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%206.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%206.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-806a-82f6-c9ed6572bb25" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80e0-ae29-c6b585ad90b5" class="bulleted-list"><li style="list-style-type:disc">Our version is 12.23 </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8080-a43a-cd0b2950561c" class="bulleted-list"><li style="list-style-type:disc">And this exploit is for 12.23 </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-804f-b30f-ccfc223a0dd6" class="bulleted-list"><li style="list-style-type:disc">Lets use it </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-801d-a2cc-eb9b841cf5e8" class="bulleted-list"><li style="list-style-type:disc">I searched the exploit with searchsploit and I downloaded it</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-80f5-88a9-fe4264415783" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%207.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%207.png"/></a></figure></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80d3-bf97-d4ab5c42b4cd" class="bulleted-list"><li style="list-style-type:disc">I learned how to use the exploit.This is too much important</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8072-844f-ff9de1102a0e" class="bulleted-list"><li style="list-style-type:disc">If I use this command the exploit creates a  image.jpg file and it runs pwd command because I specified it </li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-8073-81b7-e3d958eea0e0" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%208.png"><img style="width:709.9833374023438px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%208.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80cb-b0a6-fb11b97ded40" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34bff1a5-72dd-806a-857c-d84af9d1f485" class="bulleted-list"><li style="list-style-type:disc">Then if I upload that image.jpg file to the system then I can make lots of things because the payload is gonna work</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80bb-8597-cff6ccdbbf7d" class="bulleted-list"><li style="list-style-type:disc">Then we can see the anwer on the screen </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8012-97a6-d9c2cacc42b5" class="bulleted-list"><li style="list-style-type:disc">For example</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-80be-bb8c-e1276ccdd6c0" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%209.png"><img style="width:624.9874877929688px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%209.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80a8-8b04-c1e7eb6814f5" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8084-9f7c-c290fa2c47d0" class="bulleted-list"><li style="list-style-type:disc">We want to find the path of downloaded files to the system</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80e8-997a-dd736e1e4559" class="bulleted-list"><li style="list-style-type:disc">Then we have to use this command </li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-807d-ba98-ccbad29fa6dd" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2010.png"><img style="width:709.9833374023438px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2010.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-801a-a749-ebc594e5bcab" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8090-b039-c943ece223d4" class="bulleted-list"><li style="list-style-type:disc">Now we can upload the image.jpg file to the system</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80c4-b26e-f0b5b46090e9" class="bulleted-list"><li style="list-style-type:disc">Then we can see the path </li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-809c-9860-f8c9c364de7e" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2011.png"><img style="width:612.9750366210938px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2011.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-8051-bad6-d46ea6859667" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80a2-8180-e6b7668b2752" class="bulleted-list"><li style="list-style-type:disc">Yeah we can see the path obviously </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8033-91f0-f036e04324af" class="bulleted-list"><li style="list-style-type:disc">If we upload a file to the this website that file goes to the this path</li></ul></div><div style="display:contents" dir="auto"><ul id="34bff1a5-72dd-80f2-bd1d-f7813dd2aff9" class="bulleted-list"><li style="list-style-type:disc">The answer found for the first question</li></ul></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-8074-9db5-f99efd3594c8" class="">
+</p></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-805a-812f-e0e86f903f19" class="">
+</p></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-801b-b246-d0bca1e6a1de" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="34aff1a5-72dd-8091-9a5a-c8c1110c641b" class="">2-What is the e-mail address and password of an employee of the company &quot;waltersltd&quot; from the data contained in the stored files?</h1></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-804d-9880-cb602672dbd6" class="bulleted-list"><li style="list-style-type:disc">Before start to second question let’s take a reverse shell because I cannot create new image.jpg file everytime because it is not useful</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8039-82c7-efb5ab9e16c0" class="bulleted-list"><li style="list-style-type:disc">I tried to get a reverse shell </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80f3-a203-e3dae2d4369c" class="bulleted-list"><li style="list-style-type:disc">I took help from gemini to get a reverse shell </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80bc-9713-ff068108ff27" class="bulleted-list"><li style="list-style-type:disc">Firstly I started a listener with netcat</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-80cd-8c3f-f59b7d233f5e" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2012.png"><img style="width:329.9750061035156px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2012.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80ae-bc56-dbe4d83afc09" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8030-b2ce-caa2cf085387" class="bulleted-list"><li style="list-style-type:disc">Firstly I tried to create that payload normally but it didn’t work then gemini told me to make this with base64 encoding </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80af-80a1-f929d08a08f2" class="bulleted-list"><li style="list-style-type:disc">Then I made those operations</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-805f-9888-de7ee8c9ea62" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2013.png"><img style="width:709.9833374023438px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2013.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80d0-b501-e2d27778d062" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8018-b5a7-de534e676c00" class="bulleted-list"><li style="list-style-type:disc">Then I created a payload with the exploit</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-80ee-856a-c8d23d78036e" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2014.png"><img style="width:709.9666748046875px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2014.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34bff1a5-72dd-80d8-8cd8-e0a733a95c37" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8026-92bc-e72e66f61e1f" class="bulleted-list"><li style="list-style-type:disc">I uploaded the image.jpg file to the system and </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80fe-b49e-c8f2ed4b8105" class="bulleted-list"><li style="list-style-type:disc">Now I have a shell in my computer</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-8074-b3da-e6a4865b7349" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2015.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2015.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-8004-a246-e0b5ea4bf4e7" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80d0-9942-fd4fe940d89b" class="bulleted-list"><li style="list-style-type:disc">I started to investigate in the shell</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-808f-993a-fc33df75f920" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2016.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2016.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-803c-8706-cca9a2773efd" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80f1-b24c-eb20a9d2dc92" class="bulleted-list"><li style="list-style-type:disc">As we can see from the picture above there are a .csv file named users</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-802d-adc9-c8295578ecb0" class="bulleted-list"><li style="list-style-type:disc">I think the answer of the question is in that file </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80ee-8e69-eb7e48062f1f" class="bulleted-list"><li style="list-style-type:disc">Let’s read it </li></ul></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-8006-b10a-f87144ba6bf4" class="">
+</p></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-80a3-97b5-d01370bbbd5e" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2017.png"><img style="width:709.9666748046875px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2017.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-801c-892d-de278003f88c" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80df-a893-fa71b6574c0d" class="bulleted-list"><li style="list-style-type:disc">The answer is obvious</li></ul></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-8012-bae0-ef3e11685858" class="">
+</p></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-8077-8c44-da97b3223e8a" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="34aff1a5-72dd-80d2-8ac5-fb3ef2fb7e93" class="">3-What is the invoice number of an invoice found in the stored files?</h1></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80b7-9600-cbcfa9421c72" class="bulleted-list"><li style="list-style-type:disc">Let’s contiune to investigate </li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-808e-8b91-f4cc674c14cb" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2018.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2018.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-804a-8916-f0966941db9a" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-804e-a01f-c31c951eac01" class="bulleted-list"><li style="list-style-type:disc">There is a pdf file named invoice </li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-80a8-8e38-e152559a2cb4" class="bulleted-list"><li style="list-style-type:disc">I think the answer of the question that I’m looking for in this file</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8053-be30-fb7cc83e3f1b" class="bulleted-list"><li style="list-style-type:disc">But I cannot open the .pdf file in here</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8039-aa68-fe05485b115d" class="bulleted-list"><li style="list-style-type:disc">Because of that I’ll create a http server in here then I’ll read the pdf in my computer</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-8023-b830-fa0050740460" class="bulleted-list"><li style="list-style-type:disc">I started the http server</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-80b4-b034-f2a44e13b8bb" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2019.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2019.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-80f8-a0f7-fa7efb903c4e" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-801f-93cf-d37fa57080dc" class="bulleted-list"><li style="list-style-type:disc">Then I connected it in my computer</li></ul></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-805f-a77a-d92f4d193074" class="bulleted-list"><li style="list-style-type:disc">So we can read the invoice number</li></ul></div><div style="display:contents" dir="ltr"><figure id="34aff1a5-72dd-8067-bbdb-d4574c38a3c0" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2020.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2020.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-8000-9cac-ecfb3efd48af" class="">
+</p></div><div style="display:contents" dir="auto"><p id="34aff1a5-72dd-804e-b117-d0c97858849e" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="34aff1a5-72dd-80c0-a590-f1d5302c026d" class="">4-What is the database connection address of the files contained in the stored files?</h1></div><div style="display:contents" dir="auto"><ul id="34aff1a5-72dd-808e-9eb1-c3b8c7a36c5a" class="bulleted-list"><li style="list-style-type:disc">Let’s continue to the invesitgation</li></ul></div><div style="display:contents" dir="auto"><ul id="34bff1a5-72dd-806c-8b73-c4a472e231e9" class="bulleted-list"><li style="list-style-type:disc">There is a file named database.go</li></ul></div><div style="display:contents" dir="ltr"><figure id="34bff1a5-72dd-8048-9945-e01da306003b" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2021.png"><img style="width:703.9874877929688px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2021.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34bff1a5-72dd-8043-a2eb-fe56242b2930" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34bff1a5-72dd-804c-aa9e-f809098b8643" class="bulleted-list"><li style="list-style-type:disc">Let’s open that file maybe we can find the answer of the question</li></ul></div><div style="display:contents" dir="auto"><ul id="34bff1a5-72dd-80db-8e17-c9693086971f" class="bulleted-list"><li style="list-style-type:disc">Yeah I found the answer of the question</li></ul></div><div style="display:contents" dir="ltr"><figure id="34bff1a5-72dd-800a-a1fd-ea7f8bc962d4" class="image"><a href="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2022.png"><img style="width:710px" src="Scenario%20Data%20Heist%20Write-Up%20Hackviser/image%2022.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="34bff1a5-72dd-80f8-950d-e04974b0036b" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="34bff1a5-72dd-8097-98b4-f8a50b508ec8" class="bulleted-list"><li style="list-style-type:disc">The ctf is over.</li></ul></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
